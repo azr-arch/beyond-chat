@@ -5,6 +5,7 @@ import { Input } from "./ui/input";
 import { useRef, useState } from "react";
 import { cn, dummyValidationFn } from "@/utils";
 import { useRouter } from "next/navigation";
+import { VscLoading } from "react-icons/vsc";
 
 interface IProps {
     changeActiveForm: () => void;
@@ -71,7 +72,7 @@ export const VerificationCard = ({ changeActiveForm }: IProps) => {
                             maxLength={1}
                             type="text"
                             className={cn(
-                                `w-12 shadow-md  h-14 border-blue-200 placeholder-shown:bg-gray-300/50
+                                `w-12 shadow-md h-14 border-blue-200 placeholder-shown:bg-gray-300/50
                                 placeholder-shown:border-transparent  text-blue-700 text-lg font-medium 
                                 bg-blue-200/50  text-center focus:border-blue-500`,
                                 error && "border-red-600  border-2 ",
@@ -89,9 +90,15 @@ export const VerificationCard = ({ changeActiveForm }: IProps) => {
                         onClick={handleValidate}
                         className="flex items-center self-end gap-x-1.5 focus:outline-none focus:underline text-blue-600 hover:text-blue-400 transition-colors "
                     >
-                        <HiMiniArrowTurnDownRight />
-                        <span className="text-sm xl:text-base">Validate</span>
-                        <span className="sr-only">Next</span>
+                        {success ? (
+                            <VscLoading className="animate-spin w-5 h-5" />
+                        ) : (
+                            <>
+                                <HiMiniArrowTurnDownRight />
+                                <span className="text-sm xl:text-base">Validate</span>
+                            </>
+                        )}
+                        <span className="sr-only">Validate</span>
                     </button>
 
                     <button

@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { FormField } from "./sign-up";
 import { HiOfficeBuilding, HiRefresh } from "react-icons/hi";
 import { HiGlobeAlt, HiSparkles } from "react-icons/hi2";
+import { PiArrowUpRightThin, PiArrowUpRightFill } from "react-icons/pi";
+import Link from "next/link";
 
 export const SetupOrg = () => {
     const [companyDetails, setCompanyDetails] = useState({
@@ -14,103 +16,194 @@ export const SetupOrg = () => {
         description: "",
     });
 
+    // Dummy data for detected, scraped, and pending pages
+    const [scrapingProgress, setScrapingProgress] = useState({
+        detected: 5,
+        scraped: 3,
+        pending: 2,
+    });
+
+    const [selectedPage, setSelectedPage] = useState<string | null>(null);
+    const [scrapedData, setScrapedData] = useState<{ [key: string]: string[] }>({
+        Homepage: ["Header content", "Footer content", "Main banner text"],
+        Pricing: ["Pricing table", "Subscription plans", "FAQ section"],
+        Contact: ["Contact form", "Address details", "Social media links"],
+    });
+
+    const pages = [
+        { name: "Homepage", status: "scraped" },
+        { name: "Pricing", status: "scraped" },
+        { name: "Contact", status: "scraped" },
+        { name: "About Us", status: "pending" },
+        { name: "Blog", status: "pending" },
+    ];
+
+    const containerRef = useRef<HTMLDivElement>(null);
+    const thumbRef = useRef<HTMLDivElement>(null);
+
+    // Handle scroll
+    useEffect(() => {
+        const container = containerRef.current;
+        const thumb = thumbRef.current;
+
+        if (!container || !thumb) return;
+
+        const handleScroll = () => {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            const scrollPercent = scrollTop / (scrollHeight - clientHeight);
+
+            // Update thumb position
+            const thumbHeight = 50; // Fixed thumb height
+            const maxTop = container.clientHeight - thumbHeight;
+            thumb.style.top = `${scrollPercent * maxTop}px`;
+        };
+
+        container.addEventListener("scroll", handleScroll);
+        return () => container.removeEventListener("scroll", handleScroll);
+    }, []);
+
     return (
-        <div className="w-full max-w-2xl h-[80%] overflow-y-scroll mx-auto bg-white rounded-xl shadow-lg p-8 border border-gray-100">
-            <div className="mb-8">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-2">
-                    Setup Your Organization
-                </h2>
-                <p className="text-gray-600">Complete your chatbot setup in 3 simple steps</p>
+        <div className="relative flex h-full md:h-[80%] w-full md:max-w-2xl mx-auto bg-white rounded-none md:rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+            {/* Scrollable Content */}
+            <div
+                ref={containerRef}
+                className="flex-1 overflow-y-auto pr-4"
+                style={{ scrollbarWidth: "none" }} // Hide default scrollbar
+            >
+                {/* Divider */}
+                <div className="p-6 space-y-8 ">
+                    <div className=" border-b border-neutral-200 pb-4">
+                        <Link
+                            href={"/"}
+                            className="text-blue-400 hover:underline float-right text-sm"
+                        >
+                            Back to login
+                        </Link>
+
+                        <h2 className="text-2xl font-semibold tracking-tight text-gray-800 ">
+                            Setup Your Organization
+                        </h2>
+                        <p className="text-gray-600 text-sm lg:text-base">
+                            Complete your chatbot setup in 3 simple steps
+                        </p>
+                    </div>
+                    {/* Company Details Section */}
+                    <div className="space-y-6">
+                        <h3 className="text-lg font-semibold text-gray-800 border-l-4 border-blue-600 pl-3">
+                            Company Information
+                        </h3>
+
+                        <FormField
+                            label="Company Name"
+                            placeholder="BeyondChats Inc"
+                            type="text"
+                            icon={<HiOfficeBuilding className="text-gray-400" />}
+                        />
+
+                        <FormField
+                            label="Website URL"
+                            placeholder="https://beyondchats.com"
+                            type="url"
+                            icon={<HiGlobeAlt className="text-gray-400" />}
+                        />
+
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-gray-700">Description</label>
+                            <div className="relative">
+                                <textarea
+                                    className="w-full text-primary shadow-border px-4 py-3 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all h-32"
+                                    placeholder="Describe your organization..."
+                                    value={companyDetails.description}
+                                    onChange={(e) =>
+                                        setCompanyDetails({
+                                            ...companyDetails,
+                                            description: e.target.value,
+                                        })
+                                    }
+                                />
+                                <button className="absolute bottom-3 right-3 text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1">
+                                    <HiSparkles className="text-lg" />
+                                    Auto-generate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Scraping Progress Section */}
+                    <div className="space-y-6">
+                        <h3 className="text-lg font-semibold text-gray-800 border-l-4 border-blue-600 pl-3">
+                            Website Analysis
+                        </h3>
+
+                        <div className="p-4 bg-gray-50 rounded-lg border shadow-border border-gray-100">
+                            <div className="flex flex-col sm:flex-row gap-y-3 sm:gap-y-0 items-start sm:items-center justify-between mb-4">
+                                <div>
+                                    <p className="font-medium text-gray-700">Scraping Progress</p>
+                                    <p className="text-sm text-gray-500">
+                                        {scrapingProgress.detected} pages detected,{" "}
+                                        {scrapingProgress.scraped} scraped,{" "}
+                                        {scrapingProgress.pending} pending
+                                    </p>
+                                </div>
+                                <div className="self-end sm:self-auto flex items-center gap-2 text-blue-600">
+                                    <HiRefresh className="animate-spin" />
+                                    <span className="text-sm">Processing...</span>
+                                </div>
+                            </div>
+
+                            {/* List of Pages */}
+                            <div className="space-y-3">
+                                {pages.map((page, index) => (
+                                    <div
+                                        key={index}
+                                        className={`p-3 rounded-lg cursor-pointer transition-all ${
+                                            selectedPage === page.name
+                                                ? "bg-blue-50 border border-blue-200"
+                                                : "bg-white border border-gray-100 hover:bg-gray-50"
+                                        }`}
+                                        onClick={() => setSelectedPage(page.name)}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm font-medium text-gray-700">
+                                                {page.name}
+                                            </span>
+                                            <span
+                                                className={`text-xs font-semibold ${
+                                                    page.status === "scraped"
+                                                        ? "text-green-600"
+                                                        : "text-yellow-600"
+                                                }`}
+                                            >
+                                                {page.status === "scraped" ? "Scraped" : "Pending"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="pt-5 border-t border-neutral-200">
+                            <Link
+                                href={"/integration"}
+                                className="ml-auto w-fit text-sm py-1 hover:bg-blue-200/60 border rounded-md border-neutral-300 gap-x-1 shadow-border px-4 flex items-center  text-blue-500 font-medium"
+                            >
+                                <PiArrowUpRightFill className="w-5 h-5" />
+                                Final step
+                            </Link>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div className="space-y-8">
-                {/* Company Details Section */}
-                <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-800 border-l-4 border-blue-600 pl-3">
-                        Company Information
-                    </h3>
-
-                    <FormField
-                        label="Company Name"
-                        placeholder="BeyondChats Inc"
-                        type="text"
-                        icon={<HiOfficeBuilding className="text-gray-400" />}
-                    />
-
-                    <FormField
-                        label="Website URL"
-                        placeholder="https://beyondchats.com"
-                        type="url"
-                        icon={<HiGlobeAlt className="text-gray-400" />}
-                    />
-
-                    <div className="space-y-2">
-                        <label className="text-sm font-medium text-gray-700">Description</label>
-                        <div className="relative">
-                            <textarea
-                                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all h-32"
-                                placeholder="Describe your organization..."
-                                value={companyDetails.description}
-                                onChange={(e) =>
-                                    setCompanyDetails({
-                                        ...companyDetails,
-                                        description: e.target.value,
-                                    })
-                                }
-                            />
-                            <button className="absolute bottom-3 right-3 text-blue-600 hover:text-blue-700 text-sm flex items-center gap-1">
-                                <HiSparkles className="text-lg" />
-                                Auto-generate
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Scraping Progress Section */}
-                <div className="space-y-6">
-                    <h3 className="text-lg font-semibold text-gray-800 border-l-4 border-blue-600 pl-3">
-                        Website Analysis
-                    </h3>
-
-                    <div className="p-4 bg-gray-50 rounded-lg border border-gray-100">
-                        <div className="flex items-center justify-between mb-4">
-                            <div>
-                                <p className="font-medium text-gray-700">Scraping Progress</p>
-                                <p className="text-sm text-gray-500">5 pages detected</p>
-                            </div>
-                            <div className="flex items-center gap-2 text-blue-600">
-                                <HiRefresh className="animate-spin" />
-                                <span className="text-sm">Processing...</span>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
-                            <ProgressBar label="Homepage" percentage={100} />
-                            <ProgressBar label="Pricing" percentage={80} />
-                            <ProgressBar label="Contact" percentage={45} />
-                        </div>
-                    </div>
-                </div>
-
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-                    Continue to Integration
-                </Button>
+            {/* Custom Scrollbar */}
+            <div className="absolute right-0 top-0 bottom-0 w-1 bg-gray-100 rounded-full">
+                {/* Scrollbar Thumb */}
+                <div
+                    ref={thumbRef}
+                    className="absolute w-1 bg-blue-500 rounded-full transition-all duration-200"
+                    style={{ height: "50px" }}
+                />
             </div>
         </div>
     );
 };
-
-const ProgressBar = ({ label, percentage }: { label: string; percentage: number }) => (
-    <div className="space-y-1">
-        <div className="flex justify-between text-sm">
-            <span className="text-gray-600">{label}</span>
-            <span className="text-gray-500">{percentage}%</span>
-        </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-            <div
-                className="h-full bg-blue-600 rounded-full transition-all duration-500"
-                style={{ width: `${percentage}%` }}
-            />
-        </div>
-    </div>
-);

@@ -59,3 +59,53 @@ body {
 textarea {
     resize: none;
 }
+
+/* Let's get this party started */
+::-webkit-scrollbar {
+    width: 2px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    height: 90%;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #007bf0;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+    height: 10px;
+}
+::-webkit-scrollbar-thumb:window-inactive {
+    background: #007bf0;
+}
+
+/* Apply styles to the container with horizontal scrolling */
+.horizontal-scrollbar {
+    white-space: nowrap; /* Prevent wrapping of content */
+}
+
+/* Style the horizontal scrollbar */
+.horizontal-scrollbar::-webkit-scrollbar {
+    height: 4px; /* Set a reasonable height for the scrollbar */
+}
+
+/* Track styling */
+.horizontal-scrollbar::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1); /* Light background for the track */
+    border-radius: 4px; /* Rounded corners for the track */
+}
+
+/* Handle (thumb) styling */
+.horizontal-scrollbar::-webkit-scrollbar-thumb {
+    background: #abd6ff; /* Blue color for the thumb */
+    border-radius: 4px; /* Rounded corners for the thumb */
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3); /* Optional shadow effect */
+}
+
+/* Handle styling when the window is inactive */
+.horizontal-scrollbar::-webkit-scrollbar-thumb:window-inactive {
+    background: #a0a0a0; /* Gray color when inactive */
+}
