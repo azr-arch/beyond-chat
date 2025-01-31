@@ -6,6 +6,7 @@ import { useRef, useState } from "react";
 import { cn, dummyValidationFn } from "@/utils";
 import { useRouter } from "next/navigation";
 import { VscLoading } from "react-icons/vsc";
+import { motion } from "motion/react";
 
 interface IProps {
     changeActiveForm: () => void;
@@ -40,11 +41,26 @@ export const VerificationCard = ({ changeActiveForm }: IProps) => {
     };
 
     return (
-        <div className="w-min relative mx-auto text-primary space-y-6 border-l border-t border-gray-400 p-8 rounded-tl-2xl">
+        <motion.div
+            initial={{
+                x: 100,
+                opacity: 0,
+            }}
+            animate={{
+                x: 0,
+                opacity: 1,
+            }}
+            transition={{
+                ease: "easeOut",
+            }}
+            className="w-min relative mx-auto text-primary space-y-6 border-l border-t border-gray-400 p-8 rounded-tl-2xl"
+        >
             <div className="space-y-3 ">
-                <h4 className="text-[2rem] leading-8 text-balance">
-                    Enter verification code from email
-                </h4>
+                <div className="overflow-hidden">
+                    <h4 className="text-[2rem] leading-8 text-balance">
+                        Enter verification code from email
+                    </h4>
+                </div>
                 <div>
                     <p className="text-gray-700 text-sm">Please enter the code we sent you</p>
                     <p className="text-gray-800 font-medium text-sm ">john@doe.com</p>
@@ -112,6 +128,6 @@ export const VerificationCard = ({ changeActiveForm }: IProps) => {
                     </button>
                 </div>
             </form>
-        </div>
+        </motion.div>
     );
 };

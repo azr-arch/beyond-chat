@@ -1,22 +1,16 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { BsArrowLeft, BsArrowRight } from "react-icons/bs";
-import { CgArrowRightO } from "react-icons/cg";
 import {
-    HiArrowPath,
     HiChatBubbleLeftRight,
     HiCheckCircle,
     HiChevronRight,
     HiDocumentDuplicate,
     HiEnvelope,
-    HiExclamationTriangle,
-    HiGlobeAlt,
-    HiShare,
-    HiSparkles,
 } from "react-icons/hi2";
 import { IntegrationStatus } from "./integration-status";
+import { AnimatePresence, motion, Variants } from "motion/react";
+import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
 
 export enum IntegrationStatusEnum {
     IDLE,
@@ -26,11 +20,14 @@ export enum IntegrationStatusEnum {
 }
 
 export const ChatbotIntegration = () => {
+    const [showIntegrationOptions, setShowIntegrationOptions] = useState(false);
+    const [copied, setCopied] = useState(false);
     const [integrationStatus, setIntegrationStatus] = useState<IntegrationStatusEnum>(
         IntegrationStatusEnum.IDLE
     );
-    const [showIntegrationOptions, setShowIntegrationOptions] = useState(false);
-    const [copied, setCopied] = useState(false);
+    const [showConfetti, setShowConfetti] = useState(false);
+
+    const codeSnippet = `<script src="https://cdn.beyondchats.com/chatbot-v1.js"></script>`;
 
     const handleCopyCode = () => {
         navigator.clipboard.writeText(codeSnippet);
@@ -38,136 +35,156 @@ export const ChatbotIntegration = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
-    const codeSnippet = `<script src="https://cdn.beyondchats.com/chatbot-v1.js"></script>`;
+    const handleTestChatbot = () => {
+        window.open("https://example.com", "_blank");
+        setIntegrationStatus(IntegrationStatusEnum.SUCCESS);
+        setShowConfetti(true);
+        setTimeout(() => setShowConfetti(false), 5000); // Hide confetti after 5 seconds
+    };
 
     return (
-        <div className="relative w-full h-full   overflow-y-auto  mx-auto bg-white rounded-none  shadow-lg border border-gray-100 overflow-hidden">
-            <div className="p-6 ">
-                <div className="space-y-6 ">
+        <motion.div className="h-full flex items-center justify-center bg-gray-100 w-full">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+                className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full"
+            >
+                <div className="space-y-4">
                     {/* Header */}
-                    <div className="space-y-2 ">
-                        <div className="flex items-end gap-x-1.5">
-                            <Link
-                                href={"setup-org"}
-                                className="text-sm py-1 focus:outline-blue-400 px-2  text-neutral-400 transition-colors hover:text-blue-400"
-                            >
-                                <BsArrowLeft className="w-4 h-4" />
-                            </Link>
-                            <h2 className="text-2xl font-semibold text-gray-800 tracking-tight leading-5">
+                    <div className="flex items-center justify-between border-b border-neutral-300 pb-4 mb-4">
+                        <div>
+                            <h1 className="text-2xl font-bold text-primary tracking-tighter">
                                 Chatbot Integration
-                            </h2>
+                            </h1>
+                            <p className="text-sm text-gray-500">
+                                Final step to launch your AI assistant
+                            </p>
                         </div>
-                        <p className="text-gray-500 text-sm lg:text-base pl-10">
-                            Final step to launch your AI assistant
-                        </p>
-                    </div>
-                    <div className="h-[1px] w-full bg-gray-200" />
-                    {/* Main Content */}
-                    <div className="space-y-6 ">
-                        {/* Top Feedback Bar */}
-                        <div className="flex justify-end group">
-                            <button className="text-blue-600 hover:text-blue-700  text-sm flex items-center gap-1">
-                                <HiChatBubbleLeftRight className="w-4 h-4" />
-                                <span className="group-hover:underline">
-                                    Chatbot not working as intended? Share feedback
-                                </span>
-                            </button>
-                        </div>
-
-                        {/* Test Chatbot Button */}
-                        <Link
-                            href={"https://example.com/"}
-                            target="_blank"
-                            referrerPolicy="no-referrer"
-                            className="w-full flex flex-col  items-start p-4 bg-blue-50 border border-blue-200 rounded-xl hover:bg-blue-100 transition-colors"
+                        <button
+                            className="text-sm text-blue-500 hover:underline flex items-center gap-1"
+                            onClick={() => alert("Feedback system not implemented")}
                         >
-                            <span className="text-blue-600 font-medium">Test Chatbot</span>
-                            <p className="text-sm text-gray-600 mt-0.5">Preview on your website</p>
-                        </Link>
+                            <HiChatBubbleLeftRight className="w-5 h-5" />
+                            Share Feedback
+                        </button>
+                    </div>
 
-                        {/* Integration Options */}
-                        <div className="border border-gray-200 rounded-xl overflow-hidden">
-                            <button
-                                className="w-full p-4 text-left bg-gray-50 hover:bg-gray-100"
-                                onClick={() => setShowIntegrationOptions(!showIntegrationOptions)}
-                            >
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <span className="text-gray-800 font-medium">
-                                            Integrate on Your Website
-                                        </span>
-                                        <p className="text-sm text-gray-600 mt-.5">
-                                            Choose your integration method
-                                        </p>
-                                    </div>
-                                    <HiChevronRight
-                                        className={`w-4 h-4 transform text-primary transition-transform ${
-                                            showIntegrationOptions ? "rotate-90" : ""
-                                        }`}
-                                    />
-                                </div>
-                            </button>
+                    {/* Test Chatbot Button */}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={handleTestChatbot}
+                        className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-md transition-colors"
+                    >
+                        Test Chatbot
+                    </motion.button>
 
-                            {showIntegrationOptions && (
-                                <div className="p-4 space-y-6 border-t border-gray-200">
-                                    <div className="space-y-4">
-                                        <h4 className="text-sm font-medium text-gray-800">
-                                            Manual Integration
-                                        </h4>
-                                        <div className="relative">
-                                            <pre className="p-4 bg-gray-100 text-gray-700  rounded-lg overflow-x-auto horizontal-scrollbar">
+                    {/* Integration Options */}
+                    <motion.div className="border border-gray-200 rounded-lg overflow-hidden">
+                        <button
+                            className="w-full p-4 text-left bg-gray-100 hover:bg-gray-200 transition-colors"
+                            onClick={() => setShowIntegrationOptions(!showIntegrationOptions)}
+                        >
+                            <div className="flex justify-between items-center text-gray-700">
+                                <span>Integrate on Your Website</span>
+                                <HiChevronRight
+                                    className={`transform transition-transform ${
+                                        showIntegrationOptions ? "rotate-90" : ""
+                                    }`}
+                                />
+                            </div>
+                        </button>
+                        <div className="overflow-hidden">
+                            <AnimatePresence>
+                                {showIntegrationOptions && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: "-100%" }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        exit={{ opacity: 0, y: "-100%" }}
+                                        transition={{ duration: 0.3, ease: "easeOut" }}
+                                        className="p-4 space-y-4"
+                                        layout
+                                    >
+                                        {/* Manual Integration */}
+                                        <div>
+                                            <h4 className="text-sm font-medium mb-2 text-gray-500">
+                                                Manual Integration
+                                            </h4>
+                                            <pre className="bg-gray-100 p-2 rounded-md text-gray-500 overflow-x-auto horizontal-scrollbar">
                                                 <code>{codeSnippet}</code>
                                             </pre>
                                             <button
                                                 onClick={handleCopyCode}
-                                                className="absolute top-2 right-2 p-2 bg-white border  border-gray-200 rounded-lg hover:bg-gray-50"
+                                                className="bg-gray-200 p-2 text-sm gap-2 text-gray-600 rounded-md inline-flex items-center mt-1"
                                             >
                                                 {copied ? (
-                                                    <HiCheckCircle className="w-5 h-5 text-green-600" />
+                                                    <HiCheckCircle className="w-5 h-5 text-green-500" />
                                                 ) : (
-                                                    <HiDocumentDuplicate className="w-5 h-5 text-gray-600" />
+                                                    <HiDocumentDuplicate className="w-5 h-5" />
                                                 )}
+                                                {copied ? "Copied!" : "Copy Code"}
                                             </button>
                                         </div>
-                                        <p className="text-sm text-gray-600">
-                                            Paste this code within the {"<head>"} tag of your
-                                            website
-                                        </p>
-                                    </div>
 
-                                    <div className="space-y-4">
-                                        <h4 className="text-sm font-medium text-gray-800">
-                                            Send Instructions
-                                        </h4>
-                                        <button className="w-full px-5 py-2 bg-gray-50 border border-gray-200 rounded-md hover:bg-gray-100 flex items-center gap-2">
-                                            <HiEnvelope className="w-5 h-5 text-gray-600" />
-                                            <span className="text-gray-800 text-sm lg:text-base">
-                                                Email to Developer
-                                            </span>
-
-                                            <BsArrowRight className=" md:block ml-auto w-4 h-4 text-gray-400" />
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
+                                        {/* Email to Developer */}
+                                        <div>
+                                            <a
+                                                href={`mailto:developer@client.com?subject=Chatbot%20Integration&body=${encodeURIComponent(
+                                                    codeSnippet
+                                                )}`}
+                                                className="bg-gray-200 p-2 text-gray-600 rounded-md flex items-center justify-between hover:bg-gray-300 transition-colors"
+                                            >
+                                                <div className="flex items-center">
+                                                    <HiEnvelope className="w-5 h-5 text-gray-500 mr-2" />
+                                                    Email to Developer
+                                                </div>
+                                                <HiChevronRight className="text-gray-500" />
+                                            </a>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
+                    </motion.div>
 
-                        {/* Test Integration Button */}
-                        <button
-                            onClick={() => setIntegrationStatus(IntegrationStatusEnum.PENDING)}
-                            className="w-fit flex items-center gap-x-2 ml-auto  px-5 py-1.5  bg-blue-600 hover:bg-blue-700 text-white rounded-md font-medium transition-colors"
-                        >
-                            Verify Integration
-                            <BsArrowRight />
-                        </button>
+                    {/* Verify Integration Button */}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIntegrationStatus(IntegrationStatusEnum.PENDING)}
+                        className="w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-md mt-4 transition-colors"
+                    >
+                        Verify Integration
+                    </motion.button>
 
+                    {/* Integration Status */}
+                    <AnimatePresence mode="wait">
                         <IntegrationStatus
                             integrationStatus={integrationStatus}
-                            setIntegrationStatus={(type) => setIntegrationStatus(type)}
+                            setIntegrationStatus={(type) => {
+                                setIntegrationStatus(type);
+                            }}
                         />
-                    </div>
+                    </AnimatePresence>
                 </div>
-            </div>
-        </div>
+            </motion.div>
+
+            {/* Confetti Animation */}
+            {showConfetti && (
+                <Fireworks
+                    autorun={{ speed: 3, duration: 5000 }}
+                    style={{
+                        position: "fixed",
+                        top: 0,
+                        left: 0,
+                        width: "100%",
+                        height: "100%",
+                        zIndex: 9999,
+                    }}
+                />
+            )}
+        </motion.div>
     );
 };

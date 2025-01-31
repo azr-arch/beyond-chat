@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { VerificationCard } from "./verification-card";
@@ -10,10 +10,10 @@ import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import Image from "next/image";
 
-import { motion } from "motion/react";
+import { motion, Variants } from "motion/react";
 
 // Animation Variants
-const containerVariants = {
+const containerVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
     exit: { opacity: 0, y: -20, transition: { duration: 0.3, ease: "easeIn" } },
