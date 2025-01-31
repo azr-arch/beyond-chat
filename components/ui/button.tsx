@@ -1,8 +1,10 @@
 import { cn } from "@/utils";
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
-
-export const Button = ({ children, className, ...props }: ButtonProps) => {
+export const Button = ({
+    children,
+    className,
+    ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement>) => {
     return (
         <button
             className={cn(

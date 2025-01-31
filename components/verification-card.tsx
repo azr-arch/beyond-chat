@@ -17,9 +17,13 @@ export const VerificationCard = ({ changeActiveForm }: IProps) => {
     const [success, setSuccess] = useState(false);
     const router = useRouter();
 
-    const inputRefs = Array.from(new Array(4)).map((_, idx) =>
-        useRef<HTMLInputElement | null>(null)
-    );
+    // This could be optimized!
+    const inputRefs = [
+        useRef<HTMLInputElement | null>(null),
+        useRef<HTMLInputElement | null>(null),
+        useRef<HTMLInputElement | null>(null),
+        useRef<HTMLInputElement | null>(null),
+    ];
 
     const handleValidate = () => {
         // Dummy validation

@@ -9,7 +9,7 @@ import {
     HiEnvelope,
 } from "react-icons/hi2";
 import { IntegrationStatus } from "./integration-status";
-import { AnimatePresence, motion, Variants } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import Fireworks from "react-canvas-confetti/dist/presets/fireworks";
 
 export enum IntegrationStatusEnum {

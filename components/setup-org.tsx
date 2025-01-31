@@ -7,7 +7,7 @@ import { HiGlobeAlt, HiSparkles } from "react-icons/hi2";
 import { PiArrowUpRightFill } from "react-icons/pi";
 import Link from "next/link";
 
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const SetupOrg = () => {
     const [companyDetails, setCompanyDetails] = useState({
